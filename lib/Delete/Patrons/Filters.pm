@@ -1,23 +1,25 @@
 use Modern::Perl;
 use Koha::Patrons;
-package Delete::Patrons;
+package Delete::Patrons::Filters;
 
-our @EXPORT = qw( dp_filter );
+use Exporter;
+our @ISA = ('Exporter');
+our @EXPORT_OK = qw( dp_filter );
 
 our $VERSION = '0.001';
 
-sub dp_filter() {
+sub dp_filter {
     my $borrowernumber = shift;
-    if ($borrowernumber =~ /^[0-9]+$/) {
-        warn "borrowernumber: $borrowernumber should be a digit";
+    if ($borrowernumber !~ /^[0-9]+$/) {
+        warn "borrowernumber: '$borrowernumber' should be a digit";
         return 0;
     }
     my $patron = Koha::Patrons->find($borrowernumber);
     if (! defined $patron) {
-        warn "borrowernumber: $borrowernumber is not in Koha";
+        warn "borrowernumber: '$borrowernumber' is not in Koha";
         return 0;
     }
-    return 1 if ($patron->borrowernotes ne "");
+    return 1 if ($patron->borrowernotes() ne "");
     return 0
 }
 
@@ -59,5 +61,4 @@ if no, he can be deleted.
 
 =head1 LICENSE
 
-Copyright (C) 2023 Nicolas Legrand.  
-
+Copyright (C) 2023 Nicolas Legrand.
