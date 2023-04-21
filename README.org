@@ -1,0 +1,16 @@
+* Delete::Patrons::Filters
+
+add some filters to the Koha delete_patrons.pl script and ship it as
+filtered_delete_patrons.pl.
+
+WIP, not working yet, don’t use it in production.
+
+Right now, it only prevents the script from deleting patrons with
+something in the borrowernotes field.
+
+* Usage
+
+#+begin_src shell
+dzil build
+dzil install
+#+end_src shell
