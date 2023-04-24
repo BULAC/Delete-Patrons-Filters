@@ -13,7 +13,7 @@ git clone https://github.com/BULAC/Delete-Patrons-Filters.git
 sudo koha-shell -c "dzil install" __SITE__
 sudo koha-shell
 export PERL5LIB=$PERL5LIB:/var/lib/koha/__SITE__/perl5/lib/perl5
-export PATH=$PATH:/var/lib/koha/  SITE__/perl5/bin
+export PATH=$PATH:/var/lib/koha/__SITE__/perl5/bin
 $ filtered_delete_patrons.pl --category_code __CATEGORY__
 Doing a dry run; no patron records will actually be deleted.
 Run again with --confirm to delete the records.
