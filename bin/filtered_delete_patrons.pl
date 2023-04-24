@@ -148,11 +148,11 @@ say $confirm ? "$deleted patrons deleted" : "$deleted patrons would have been de
 
 =head1 NAME
 
-delete_patrons - This script deletes patrons
+filtered_delete_patrons - This script deletes patrons with some new filters
 
 =head1 SYNOPSIS
 
-delete_patrons.pl [-h|--help] [-v|--verbose] [-c|--confirm] [--not_borrowed_since=DATE] [--expired_before=DATE] [--last-seen=DATE] [--category_code=CAT] [--category_code=CAT ...] [--library=LIBRARY] [--file=FILE]
+filtered_delete_patrons.pl [-h|--help] [-v|--verbose] [-c|--confirm] [--not_borrowed_since=DATE] [--expired_before=DATE] [--last-seen=DATE] [--category_code=CAT] [--category_code=CAT ...] [--library=LIBRARY] [--file=FILE]
 
 Dates should be in ISO format, e.g., 2013-07-19, and can be generated
 with `date -d '-3 month' --iso-8601`.
