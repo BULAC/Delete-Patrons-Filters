@@ -11,6 +11,8 @@ use Koha::DateUtils qw( dt_from_string );
 use Koha::Patrons;
 use C4::Log qw( cronlogaction );
 
+use Delete::Patrons::Filters qw( dp_filter );
+
 my ( $help, $verbose, $not_borrowed_since, $expired_before, $last_seen,
     @category_code, $branchcode, $file, $confirm );
 
@@ -117,6 +119,11 @@ for my $member (@$members) {
             say "Cannot delete patron $borrowernumber: patron is AnonymousPatron";
             next;
         }
+    }
+
+    if (dp_filter($borrowernumber)) {
+            say "Cannot delete patron $borrowernumber: Filtered by Delete::Patrons::Filters";
+            next;
     }
 
     if ( $confirm ) {

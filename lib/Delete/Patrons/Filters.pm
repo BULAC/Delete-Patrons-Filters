@@ -19,7 +19,10 @@ sub dp_filter {
         warn "borrowernumber: '$borrowernumber' is not in Koha";
         return 0;
     }
-    return 1 if ($patron->borrowernotes() ne "");
+    if ($patron->borrowernotes() ne "") {
+        say "FILTER: Patron $borrowernumber has notes: " . $patron->borrowernotes();
+        return 1;
+    }
     return 0
 }
 
