@@ -1,5 +1,6 @@
 use Modern::Perl;
 use Koha::Patrons;
+use Koha::Patron::Messages;
 package Delete::Patrons::Filters;
 
 use Exporter;
@@ -19,8 +20,18 @@ sub dp_filter {
         warn "borrowernumber: '$borrowernumber' is not in Koha";
         return 0;
     }
+    # Keep borrowers with notes
     if ($patron->borrowernotes() ne "") {
         say "FILTER: Patron $borrowernumber has notes: " . $patron->borrowernotes();
+        return 1;
+    }
+    # Keep borrowers with messages
+    my $messages = Koha::Patron::Messages->search({ borrowernumber => $borrowernumber })->unblessed();
+    if ($#$messages == 0) {
+        say "FILTER: Patron $borrowernumber has messages: ";
+        for my $message (@$messages) {
+            say '    - ' . $message->{'message'} . ', ' . $message->{'message_date'};
+        }
         return 1;
     }
     return 0
@@ -58,8 +69,8 @@ The following are exported:
 =item dp_filter
 
 The filter takes a $borrowernumber as parameter, it then checks if
-this borrower has internal notes. If yes he is excluded from deletion,
-if no, he can be deleted.
+this borrower has internal notes, messages. If yes he is excluded from
+deletion, if no, he can be deleted.
 
 
 =head1 LICENSE
