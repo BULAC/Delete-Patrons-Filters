@@ -1,5 +1,9 @@
 * 0.000
 ** 0.001
-   Add filter on borrowernotes
+   - Add filter on borrowernotes
 ** 0.002
-   Add filter on messages
+   - Add filter on messages
+** 0.003
+   - Add filter on public virtualshelves
+   - Fix filter on messages: now multiple messages also trigger the
+     filter.
