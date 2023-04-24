@@ -3,8 +3,10 @@
 Add some filters to the Koha delete_patrons.pl script and ship it as
 filtered_delete_patrons.pl.
 
-Right now, it only prevents the script from deleting patrons with
-something in the borrowernotes field.
+Right now, it prevents the script from deleting patrons with :
+- something in the borrowernotes field
+- messages
+- public virtualshelves
 
 * Usage
 
