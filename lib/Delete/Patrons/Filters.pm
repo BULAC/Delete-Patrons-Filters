@@ -11,6 +11,7 @@ our $VERSION = '0.001';
 
 sub dp_filter {
     my $borrowernumber = shift;
+
     if ($borrowernumber !~ /^[0-9]+$/) {
         warn "borrowernumber: '$borrowernumber' should be a digit";
         return 0;
@@ -20,19 +21,37 @@ sub dp_filter {
         warn "borrowernumber: '$borrowernumber' is not in Koha";
         return 0;
     }
+
     # Keep borrowers with notes
     if ($patron->borrowernotes() ne "") {
         say "FILTER: Patron $borrowernumber has notes: " . $patron->borrowernotes();
         return 1;
     }
+
     # Keep borrowers with messages
     my $messages = Koha::Patron::Messages->search({ borrowernumber => $borrowernumber })->unblessed();
-    if ($#$messages == 0) {
+    if ($#$messages >= 0) {
         say "FILTER: Patron $borrowernumber has messages: ";
         for my $message (@$messages) {
             say '    - ' . $message->{'message'} . ', ' . $message->{'message_date'};
         }
         return 1;
+    }
+
+    # Keep borrowers with public virtualshelves
+    my $shelves = Koha::Virtualshelves->search( { owner => $borrowernumber } )->unblessed;
+    my $public_shelves = [];
+    for my $shelf (@$shelves) {
+        if ($shelf->{'public'} == 1) {
+            push @$public_shelves, $shelf;
+        }
+    }
+    if ($#$public_shelves >= 0) {
+        say "FILTER: Patron $borrowernumber has at least one public list: ";
+        for my $shelf (@$public_shelves) {
+            say '    - ' . $shelf->{'shelfnumber'} . ', ' . $shelf->{'shelfname'};
+        }
+        return 1
     }
     return 0
 }
