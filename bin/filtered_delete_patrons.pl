@@ -99,6 +99,8 @@ say scalar(@$members) . " patrons match conditions" if $verbose;;
 
 my $anonymous_patron = C4::Context->preference("AnonymousPatron");
 my $deleted = 0;
+open(my $log, ">", "/tmp/patrons_deleted")
+    or die "Can't open > /tmp/patrons_deleted.pl: $!";
 for my $member (@$members) {
     print "Testing that we can delete patron $member->{borrowernumber}... "
       if $verbose;
@@ -125,7 +127,14 @@ for my $member (@$members) {
             say "Cannot delete patron $borrowernumber: Filtered by Delete::Patrons::Filters";
             next;
     }
-
+    say $log join("\t",
+                  $patron->borrowernumber(),
+                  $patron->userid(),
+                  $patron->cardnumber(),
+                  $patron->firstname(),
+                  $patron->surname(),
+                  $patron->email(),
+        );
     if ( $confirm ) {
         my $deleted = eval { $patron->move_to_deleted; };
         if ($@ or not $deleted) {
@@ -143,6 +152,7 @@ for my $member (@$members) {
     say "OK" if $verbose;
 }
 
+close $log;
 
 say $confirm ? "$deleted patrons deleted" : "$deleted patrons would have been deleted" if $verbose;
 
