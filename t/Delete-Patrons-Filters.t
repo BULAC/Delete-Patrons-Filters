@@ -20,5 +20,5 @@ my $patron_without_notes = Koha::Patrons->search({"borrowernotes" => {"=" => ""}
 use_ok 'Delete::Patrons::Filters';
 is (dp_filter("POUAITE"), 0, "None digit should return 0");
 is (dp_filter($non_existent_patron_id), 0, "Deleted Patrons should return 0");
-is (dp_filter($patron_with_notes->borrowernumber()), 1, $patron_with_notes->borrowernumber() . "Patrons with notes should return 1");
+cmp_ok (dp_filter($patron_with_notes->borrowernumber()), 'ne', "", $patron_with_notes->borrowernumber() . "Patrons with notes should return a non empty string");
 is (dp_filter($patron_without_notes->borrowernumber()), 0, "Patrons without notes should return 0");

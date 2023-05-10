@@ -23,19 +23,20 @@ sub dp_filter {
     }
 
     # Keep borrowers with notes
-    if ($patron->borrowernotes() ne "") {
-        say "FILTER: Patron $borrowernumber has notes: " . $patron->borrowernotes();
-        return 1;
+    if (defined $patron->borrowernotes()) {
+	if ($patron->borrowernotes() ne "") {
+	    return "FILTER: Patron $borrowernumber has notes: " . $patron->borrowernotes();
+	}
     }
 
     # Keep borrowers with messages
     my $messages = Koha::Patron::Messages->search({ borrowernumber => $borrowernumber })->unblessed();
     if ($#$messages >= 0) {
-        say "FILTER: Patron $borrowernumber has messages: ";
+	my $reason =  "FILTER: Patron $borrowernumber has messages: ";
         for my $message (@$messages) {
-            say '    - ' . $message->{'message'} . ', ' . $message->{'message_date'};
+            $reason .= $message->{'message'} . ', ' . $message->{'message_date'} . ' ; ';
         }
-        return 1;
+        return $reason;
     }
 
     # Keep borrowers with public virtualshelves
@@ -47,11 +48,11 @@ sub dp_filter {
         }
     }
     if ($#$public_shelves >= 0) {
-        say "FILTER: Patron $borrowernumber has at least one public list: ";
+        my $reason = "FILTER: Patron $borrowernumber has at least one public list: ";
         for my $shelf (@$public_shelves) {
-            say '    - ' . $shelf->{'shelfnumber'} . ', ' . $shelf->{'shelfname'};
+            $reason .= $shelf->{'shelfnumber'} . ', ' . $shelf->{'shelfname'} . ' ; ';
         }
-        return 1
+        return $reason;
     }
     return 0
 }
