@@ -123,10 +123,8 @@ for my $member (@$members) {
         }
     }
 
-    if (dp_filter($borrowernumber)) {
-            say "Cannot delete patron $borrowernumber: Filtered by Delete::Patrons::Filters";
-            next;
-    }
+    next if (dp_filter($borrowernumber));
+
     say $log join("\t",
                   $patron->borrowernumber(),
                   $patron->userid(),
