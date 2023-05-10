@@ -99,8 +99,10 @@ say scalar(@$members) . " patrons match conditions" if $verbose;;
 
 my $anonymous_patron = C4::Context->preference("AnonymousPatron");
 my $deleted = 0;
-open(my $log, ">", "/tmp/patrons_deleted")
-    or die "Can't open > /tmp/patrons_deleted.pl: $!";
+open(my $log, ">", "/tmp/deleted_patrons")
+    or die "Can't open > /tmp/deleted_patrons: $!";
+open(my $log_filtered, ">", "/tmp/filtered_patrons")
+    or die "Can't open > /tmp/filtered_patrons: $!";
 for my $member (@$members) {
     print "Testing that we can delete patron $member->{borrowernumber}... "
       if $verbose;
@@ -122,11 +124,25 @@ for my $member (@$members) {
             next;
         }
     }
-
-    next if (dp_filter($borrowernumber));
+    my $filter = dp_filter($borrowernumber);
+    if ($filter) {
+	say $filter;
+	say $log_filtered join("\t",
+			       $patron->borrowernumber(),
+			       $patron->categorycode(),
+			       $patron->userid(),
+			       $patron->cardnumber(),
+			       $patron->firstname(),
+			       $patron->surname(),
+			       $patron->email(),
+			       $filter,
+	    );
+	next;
+    }
 
     say $log join("\t",
                   $patron->borrowernumber(),
+		  $patron->categorycode(),
                   $patron->userid(),
                   $patron->cardnumber(),
                   $patron->firstname(),
