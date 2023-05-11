@@ -125,6 +125,7 @@ for my $member (@$members) {
         }
     }
     my $filter = dp_filter($borrowernumber);
+    $filter ~= tr/\n/ /;
     if ($filter) {
 	say $filter;
 	say $log_filtered join("\t",
