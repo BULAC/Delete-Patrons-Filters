@@ -10,6 +10,8 @@ use C4::Members qw( GetBorrowersToExpunge );
 use Koha::DateUtils qw( dt_from_string );
 use Koha::Patrons;
 use C4::Log qw( cronlogaction );
+use autodie qw(:all);
+use utf8;
 
 use Delete::Patrons::Filters qw( dp_filter );
 
@@ -50,7 +52,7 @@ cronlogaction();
 
 my @file_members;
 if ($file) {
-    open(my $fh, '<:encoding(UTF-8)', $file) or die "Could not open file $file' $!";
+    open(my $fh, '<:encoding(UTF-8)', $file) ;
     while (my $line = <$fh>) {
         chomp($line);
         my %fm = ('borrowernumber' => $line);
@@ -99,10 +101,8 @@ say scalar(@$members) . " patrons match conditions" if $verbose;;
 
 my $anonymous_patron = C4::Context->preference("AnonymousPatron");
 my $deleted = 0;
-open(my $log, ">", "/tmp/deleted_patrons")
-    or die "Can't open > /tmp/deleted_patrons: $!";
-open(my $log_filtered, ">", "/tmp/filtered_patrons")
-    or die "Can't open > /tmp/filtered_patrons: $!";
+open(my $log, ">:encoding(UTF-8)", "/tmp/deleted_patrons") ;
+open(my $log_filtered, ">:encoding(UTF-8)", "/tmp/filtered_patrons") ;
 for my $member (@$members) {
     print "Testing that we can delete patron $member->{borrowernumber}... "
       if $verbose;
@@ -125,7 +125,8 @@ for my $member (@$members) {
         }
     }
     my $filter = dp_filter($borrowernumber);
-    $filter ~= tr/\n/ /;
+    $filter =~ tr/\n/ /;
+    $filter =~ tr/\r/ /;
     if ($filter) {
 	say $filter;
 	say $log_filtered join("\t",
