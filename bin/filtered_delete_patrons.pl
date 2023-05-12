@@ -104,7 +104,7 @@ my $anonymous_patron = C4::Context->preference("AnonymousPatron");
 my $deleted = 0;
 open(my $log, ">>:encoding(UTF-8)",
      C4::Context->config("logdir") . "/deleted_patrons.log") ;
-open(my $log_filtered, ">:encoding(UTF-8)",
+open(my $log_filtered, ">:encoding(UTF-8)", # yes ">", otherwise we would have duplicates everyday
      C4::Context->config("logdir") . "/filtered_patrons.log") ;
 for my $member (@$members) {
     print "Testing that we can delete patron $member->{borrowernumber}... "
