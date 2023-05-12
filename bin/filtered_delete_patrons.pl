@@ -10,6 +10,7 @@ use C4::Members qw( GetBorrowersToExpunge );
 use Koha::DateUtils qw( dt_from_string );
 use Koha::Patrons;
 use C4::Log qw( cronlogaction );
+use C4::Context;
 use autodie qw(:all);
 use utf8;
 
@@ -101,8 +102,10 @@ say scalar(@$members) . " patrons match conditions" if $verbose;;
 
 my $anonymous_patron = C4::Context->preference("AnonymousPatron");
 my $deleted = 0;
-open(my $log, ">:encoding(UTF-8)", "/tmp/deleted_patrons") ;
-open(my $log_filtered, ">:encoding(UTF-8)", "/tmp/filtered_patrons") ;
+open(my $log, ">>:encoding(UTF-8)",
+     C4::Context->config("logdir") . "/deleted_patrons.log") ;
+open(my $log_filtered, ">:encoding(UTF-8)",
+     C4::Context->config("logdir") . "/filtered_patrons.log") ;
 for my $member (@$members) {
     print "Testing that we can delete patron $member->{borrowernumber}... "
       if $verbose;
