@@ -1,6 +1,7 @@
 use Modern::Perl;
 use Koha::Patrons;
 use Koha::Patron::Messages;
+use DateTime;
 package Delete::Patrons::Filters;
 
 use Exporter;
@@ -54,6 +55,20 @@ sub dp_filter {
         }
         return $reason;
     }
+
+    # Keep borrowers with restrictions
+    my $restriction;
+    eval {
+	my $debarred_date = $patron->debarred();
+	my $today = DateTime->now("time_zone" => "Europe/Paris")->ymd;
+	if ( defined $debarred_date and ($debarred_date ge $today)) {
+	    $restriction = "FILTER: Patron $borrowernumber is restricted";
+	}
+    };
+    if (defined $restriction) {
+	return $restriction;
+    }
+
     return 0
 }
 
